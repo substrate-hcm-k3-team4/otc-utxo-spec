@@ -38,7 +38,6 @@ Welcome to the interBTC Technical Specification!
   spec/reward
   spec/staking
   spec/escrow
-  spec/governance
 
 .. toctree::
   :maxdepth: 2

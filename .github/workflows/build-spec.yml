@@ -28,7 +28,7 @@ jobs:
         with:
           name: interbtc-spec
           path: build/latex/interbtc.pdf
-          if-no-files-found:
+          if-no-files-found: error
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3

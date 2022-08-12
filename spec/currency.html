@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Currency &mdash; interBTC Specification  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Fee" href="fee.html" />
+    <link rel="prev" title="Collateral" href="collateral.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: grey" >
+            <a href="../index.html" class="icon icon-home"> interBTC Specification
+          </a>
+              <div class="version">
+                v5.6.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro/at-a-glance.html">interBTC at a Glance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/CbA.html">Cryptocurrency-backed Assets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/polkadot.html">Polkadot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/bitcoin.html">Bitcoin Data Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/accepted-format.html">Accepted Bitcoin Transaction Format</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">How to Read This Specification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Specification</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="btc-relay/index.html">BTC-Relay</a></li>
+<li class="toctree-l1"><a class="reference internal" href="collateral.html">Collateral</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Currency</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-model">Data Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#structs">Structs</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#amount">Amount</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#functions">Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#from-signed-fixed-point">from_signed_fixed_point</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#specification">Specification</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#to-signed-fixed-point">to_signed_fixed_point</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Specification</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#convert-to">convert_to</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id3">Specification</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#checked-add">checked_add</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id4">Specification</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#checked-sub">checked_sub</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id5">Specification</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#saturating-sub">saturating_sub</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id6">Specification</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#checked-fixed-point-mul">checked_fixed_point_mul</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id7">Specification</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#checked-fixed-point-mul-rounded-up">checked_fixed_point_mul_rounded_up</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id8">Specification</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#rounded-mul">rounded_mul</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id9">Specification</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#checked-div">checked_div</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id10">Specification</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#ratio">ratio</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id11">Specification</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#comparisons-lt-le-eq-ge-gt">Comparisons: lt, le, eq, ge, gt</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id12">Specification</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#transfer">transfer</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id13">Specification</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#lock-on">lock_on</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id14">Specification</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#unlock-on">unlock_on</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id15">Specification</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#burn-from">burn_from</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id16">Specification</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mint-to">mint_to</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id17">Specification</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fee.html">Fee</a></li>
+<li class="toctree-l1"><a class="reference internal" href="oracle.html">Oracle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="issue.html">Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="refund.html">Refund</a></li>
+<li class="toctree-l1"><a class="reference internal" href="redeem.html">Redeem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="replace.html">Replace</a></li>
+<li class="toctree-l1"><a class="reference internal" href="security.html">Security</a></li>
+<li class="toctree-l1"><a class="reference internal" href="relay.html">Relay</a></li>
+<li class="toctree-l1"><a class="reference internal" href="treasury.html">Treasury</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vault-registry.html">Vault Registry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nomination.html">Vault Nomination</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reward.html">Reward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="staking.html">Staking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="escrow.html">Escrow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="governance.html">Governance</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Security and Performance</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../security_performance/liquidations.html">Vault Liquidations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../security_performance/xclaim-security.html">XCLAIM Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../security_performance/btcrelay-security.html">BTC-Relay Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../security_performance/performance.html">Performance Analysis</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Economics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../economics/incentives.html">Economic Incentives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../economics/fees.html">Fee Model</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">All the rest</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../other/license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../other/interlay.html">Interlay</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: grey" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">interBTC Specification</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Currency</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/spec/currency.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="currency">
+<span id="id1"></span><h1>Currency<a class="headerlink" href="#currency" title="Permalink to this headline"></a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline"></a></h2>
+<p>This currency pallet provides an interface for the other pallets to manage balances of different currencies.
+Accounts have three balances per currency: they have a <code class="docutils literal notranslate"><span class="pre">free</span></code>, <code class="docutils literal notranslate"><span class="pre">reserved</span></code>, and <code class="docutils literal notranslate"><span class="pre">frozen</span></code> amount.
+Users are able to freely transfer <code class="docutils literal notranslate"><span class="pre">free</span> <span class="pre">-</span> <span class="pre">frozen</span></code> balances, but only the parachain pallets are able to operate on <code class="docutils literal notranslate"><span class="pre">reserved</span></code> amounts.
+<code class="docutils literal notranslate"><span class="pre">Frozen</span></code> is used to implement temptorary locks of free balances like vesting schedules.</p>
+<p>The external API for dispatchable and RPC functions use ‘thin’ amount types, meaning that the used currency depends on the context. For example, the currency used in <a class="reference internal" href="vault-registry.html#vault-registry-function-deposit-collateral"><span class="std std-ref">deposit_collateral</span></a> depends on the vault’s <code class="docutils literal notranslate"><span class="pre">currencyId</span></code>.
+Sometimes, as is for example the case for <a class="reference internal" href="vault-registry.html#vault-registry-function-register-vault"><span class="std std-ref">register_vault</span></a>, the function takes an additional <code class="docutils literal notranslate"><span class="pre">currencyId</span></code> argument to specify the currency to use. In contrast, internally in the parachain amounts are often represented by the <code class="docutils literal notranslate"><span class="pre">Amount</span></code> type defined in this pallet, which in addition to the amount, also contains the used currency. The benefit of this type is two-fold. First, we can guarantee that operations only work on compatible amounts. For example, it prevents adding DOT amounts to KSM amounts. Second, it allows for a more convenient api.</p>
+</section>
+<section id="data-model">
+<h2>Data Model<a class="headerlink" href="#data-model" title="Permalink to this headline"></a></h2>
+<section id="structs">
+<h3>Structs<a class="headerlink" href="#structs" title="Permalink to this headline"></a></h3>
+<section id="amount">
+<h4>Amount<a class="headerlink" href="#amount" title="Permalink to this headline"></a></h4>
+<p>Stores an amount and the used currency.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 25%" />
+<col style="width: 45%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">balance</span></code></p></td>
+<td><p>Balance</p></td>
+<td><p>The amount.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">currency</span></code></p></td>
+<td><p>CurrencyId</p></td>
+<td><p>The used currency.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline"></a></h2>
+<section id="from-signed-fixed-point">
+<span id="currency-function-from-signed-fixed-point"></span><h3>from_signed_fixed_point<a class="headerlink" href="#from-signed-fixed-point" title="Permalink to this headline"></a></h3>
+<p>Constructs an <code class="docutils literal notranslate"><span class="pre">Amount</span></code> from a signed fixed point number and a <code class="docutils literal notranslate"><span class="pre">currencyId</span></code>. The fixed point number is truncated. E.g., a value of 2.5 would return 2.</p>
+<section id="specification">
+<h4>Specification<a class="headerlink" href="#specification" title="Permalink to this headline"></a></h4>
+<p><em>Function Signature</em></p>
+<p><code class="docutils literal notranslate"><span class="pre">from_signed_fixed_point(amount,</span> <span class="pre">currencyId)</span></code></p>
+<p><em>Parameters</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">amount</span></code>: The amount as fixed point.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">currencyId</span></code>: The currency.</p></li>
+</ul>
+<p><em>Preconditions</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">amount</span></code> MUST be representable as a 128 bit unsigned number.</p></li>
+</ul>
+<p><em>Postconditions</em></p>
+<ul class="simple">
+<li><p>An <code class="docutils literal notranslate"><span class="pre">Amount</span></code> MUST be returned where <code class="docutils literal notranslate"><span class="pre">Amount.amount</span></code> is the truncated <code class="docutils literal notranslate"><span class="pre">amount</span></code> argument, and <code class="docutils literal notranslate"><span class="pre">Amount.currencyId</span></code> is the <code class="docutils literal notranslate"><span class="pre">currencyId</span></code> argument.</p></li>
+</ul>
+</section>
+</section>
+<section id="to-signed-fixed-point">
+<span id="currency-function-to-signed-fixed-point"></span><h3>to_signed_fixed_point<a class="headerlink" href="#to-signed-fixed-point" title="Permalink to this headline"></a></h3>
+<p>Converts an <code class="docutils literal notranslate"><span class="pre">Amount</span></code> struct into a fixed-point number.</p>
+<section id="id2">
+<h4>Specification<a class="headerlink" href="#id2" title="Permalink to this headline"></a></h4>
+<p><em>Function Signature</em></p>
+<p><code class="docutils literal notranslate"><span class="pre">to_signed_fixed_point(amount)</span></code></p>
+<p><em>Parameters</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">amount</span></code>: The amount struct.</p></li>
+</ul>
+<p><em>Preconditions</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">amount</span></code> MUST be representable by the signed fixed point type.</p></li>
+</ul>
+<p><em>Postconditions</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">amount.amount</span></code> MUST be returned as a fixed point number.</p></li>
+</ul>
+</section>
+</section>
+<section id="convert-to">
+<span id="currency-function-convert-to"></span><h3>convert_to<a class="headerlink" href="#convert-to" title="Permalink to this headline"></a></h3>
+<p>Converts the given <code class="docutils literal notranslate"><span class="pre">amount</span></code> into the given currency.</p>
+<section id="id3">
+<h4>Specification<a class="headerlink" href="#id3" title="Permalink to this headline"></a></h4>
+<p><em>Function Signature</em></p>
+<p><code class="docutils literal notranslate"><span class="pre">convert_to(amount,</span> <span class="pre">currencyId)</span></code></p>
+<p><em>Parameters</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">amount</span></code>: The amount struct.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">currencyId</span></code>: The currency to convert to.</p></li>
+</ul>
+<p><em>Preconditions</em></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="oracle.html#convert"><span class="std std-ref">convert</span></a> when called with <code class="docutils literal notranslate"><span class="pre">amount</span></code> and <code class="docutils literal notranslate"><span class="pre">currencyId</span></code> MUST return successfully.</p></li>
+</ul>
+<p><em>Postconditions</em></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="oracle.html#convert"><span class="std std-ref">convert</span></a> MUST be called with <code class="docutils literal notranslate"><span class="pre">amount</span></code> and <code class="docutils literal notranslate"><span class="pre">currencyId</span></code> as arguments.</p></li>
+</ul>
+</section>
+</section>
+<section id="checked-add">
+<span id="currency-function-checked-add"></span><h3>checked_add<a class="headerlink" href="#checked-add" title="Permalink to this headline"></a></h3>
+<p>Adds two amounts.</p>
+<section id="id4">
+<h4>Specification<a class="headerlink" href="#id4" title="Permalink to this headline"></a></h4>
+<p><em>Function Signature</em></p>
+<p><code class="docutils literal notranslate"><span class="pre">checked_add(amount1,</span> <span class="pre">amount2)</span></code></p>
+<p><em>Parameters</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">amount1</span></code>: the first amount.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">amount2</span></code>: the second amount.</p></li>
+</ul>
+<p><em>Preconditions</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">amount1.currencyId</span></code> MUST be equal to <code class="docutils literal notranslate"><span class="pre">amount2.currencyId</span></code></p></li>
+</ul>
+<p><em>Postconditions</em></p>
+<ul class="simple">
+<li><p>MUST return the sum of both amounts.</p></li>
+</ul>
+</section>
+</section>
+<section id="checked-sub">
+<span id="currency-function-checked-sub"></span><h3>checked_sub<a class="headerlink" href="#checked-sub" title="Permalink to this headline"></a></h3>
+<p>Subtracts two amounts.</p>
+<section id="id5">
+<h4>Specification<a class="headerlink" href="#id5" title="Permalink to this headline"></a></h4>
+<p><em>Function Signature</em></p>
+<p><code class="docutils literal notranslate"><span class="pre">checked_sub(amount1,</span> <span class="pre">amount2)</span></code></p>
+<p><em>Parameters</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">amount1</span></code>: the first amount.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">amount2</span></code>: the second amount.</p></li>
+</ul>
+<p><em>Preconditions</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">amount1.currencyId</span></code> MUST be equal to <code class="docutils literal notranslate"><span class="pre">amount2.currencyId</span></code></p></li>
+</ul>
+<p><em>Postconditions</em></p>
+<ul class="simple">
+<li><p>MUST return <code class="docutils literal notranslate"><span class="pre">amount1</span> <span class="pre">-</span> <span class="pre">amount2</span></code>.</p></li>
+</ul>
+</section>
+</section>
+<section id="saturating-sub">
+<span id="currency-function-saturating-sub"></span><h3>saturating_sub<a class="headerlink" href="#saturating-sub" title="Permalink to this headline"></a></h3>
+<p>Subtracts two amounts, or zero if the result would be negative.</p>
+<section id="id6">
+<h4>Specification<a class="headerlink" href="#id6" title="Permalink to this headline"></a></h4>
+<p><em>Function Signature</em></p>
+<p><code class="docutils literal notranslate"><span class="pre">saturating_sub(amount1,</span> <span class="pre">amount2)</span></code></p>
+<p><em>Parameters</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">amount1</span></code>: the first amount.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">amount2</span></code>: the second amount.</p></li>
+</ul>
+<p><em>Preconditions</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">amount1.currencyId</span></code> MUST be equal to <code class="docutils literal notranslate"><span class="pre">amount2.currencyId</span></code></p></li>
+</ul>
+<p><em>Postconditions</em></p>
+<ul class="simple">
+<li><p>if <code class="docutils literal notranslate"><span class="pre">amount2</span> <span class="pre">&lt;=</span> <span class="pre">amount1</span></code>, then this function MUST return <code class="docutils literal notranslate"><span class="pre">amount1</span> <span class="pre">-</span> <span class="pre">amount2</span></code>.</p></li>
+<li><p>if <code class="docutils literal notranslate"><span class="pre">amount2</span> <span class="pre">&gt;</span> <span class="pre">amount1</span></code>, then this function MUST return zero.</p></li>
+</ul>
+</section>
+</section>
+<section id="checked-fixed-point-mul">
+<span id="currency-function-checked-fixed-point-mul"></span><h3>checked_fixed_point_mul<a class="headerlink" href="#checked-fixed-point-mul" title="Permalink to this headline"></a></h3>
+<p>Multiplies an amount by a fixed point scalar. The result is rounded down.</p>
+<section id="id7">
+<h4>Specification<a class="headerlink" href="#id7" title="Permalink to this headline"></a></h4>
+<p><em>Function Signature</em></p>
+<p><code class="docutils literal notranslate"><span class="pre">checked_fixed_point_mul(amount,</span> <span class="pre">scalar)</span></code></p>
+<p><em>Parameters</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">amount</span></code>: the Amount struct.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scalar</span></code>: the fixed point scalar.</p></li>
+</ul>
+<p><em>Preconditions</em></p>
+<ul class="simple">
+<li><p>The multiplied amount MUST be representable by a 128 bit unsigned integer.</p></li>
+</ul>
+<p><em>Postconditions</em></p>
+<ul class="simple">
+<li><p>MUST return a copy of <code class="docutils literal notranslate"><span class="pre">amount</span></code> that is multiplied by the scalar. The result MUST be rounded down.</p></li>
+</ul>
+</section>
+</section>
+<section id="checked-fixed-point-mul-rounded-up">
+<span id="currency-function-checked-fixed-point-mul-rounded-up"></span><h3>checked_fixed_point_mul_rounded_up<a class="headerlink" href="#checked-fixed-point-mul-rounded-up" title="Permalink to this headline"></a></h3>
+<p>Like <a class="reference internal" href="#currency-function-checked-fixed-point-mul"><span class="std std-ref">checked_fixed_point_mul</span></a>, but with a rounded-up result.</p>
+<section id="id8">
+<h4>Specification<a class="headerlink" href="#id8" title="Permalink to this headline"></a></h4>
+<p><em>Function Signature</em></p>
+<p><code class="docutils literal notranslate"><span class="pre">checked_fixed_point_mul_rounded_up(amount,</span> <span class="pre">scalar)</span></code></p>
+<p><em>Parameters</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">amount</span></code>: the Amount struct.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scalar</span></code>: the fixed point scalar.</p></li>
+</ul>
+<p><em>Preconditions</em></p>
+<ul class="simple">
+<li><p>The multiplied amount MUST be representable by a 128 bit unsigned integer.</p></li>
+</ul>
+<p><em>Postconditions</em></p>
+<ul class="simple">
+<li><p>MUST return a copy of <code class="docutils literal notranslate"><span class="pre">amount</span></code> that is multiplied by the scalar. The result MUST be rounded up.</p></li>
+</ul>
+</section>
+</section>
+<section id="rounded-mul">
+<span id="currency-function-rounded-mul"></span><h3>rounded_mul<a class="headerlink" href="#rounded-mul" title="Permalink to this headline"></a></h3>
+<p>Like <a class="reference internal" href="#currency-function-checked-fixed-point-mul"><span class="std std-ref">checked_fixed_point_mul</span></a>, but with a rounded result.</p>
+<section id="id9">
+<h4>Specification<a class="headerlink" href="#id9" title="Permalink to this headline"></a></h4>
+<p><em>Function Signature</em></p>
+<p><code class="docutils literal notranslate"><span class="pre">rounded_mul(amount,</span> <span class="pre">scalar)</span></code></p>
+<p><em>Parameters</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">amount</span></code>: the Amount struct.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scalar</span></code>: the fixed point scalar.</p></li>
+</ul>
+<p><em>Preconditions</em></p>
+<ul class="simple">
+<li><p>The multiplied amount MUST be representable by a 128 bit unsigned integer.</p></li>
+</ul>
+<p><em>Postconditions</em></p>
+<ul class="simple">
+<li><p>MUST return a copy of <code class="docutils literal notranslate"><span class="pre">amount</span></code> that is multiplied by the scalar. The result MUST be rounded to the nearest integer.</p></li>
+</ul>
+</section>
+</section>
+<section id="checked-div">
+<span id="currency-function-checked-div"></span><h3>checked_div<a class="headerlink" href="#checked-div" title="Permalink to this headline"></a></h3>
+<p>Divides an amount by a fixed point scalar. The result is rounded down.</p>
+<section id="id10">
+<h4>Specification<a class="headerlink" href="#id10" title="Permalink to this headline"></a></h4>
+<p><em>Function Signature</em></p>
+<p><code class="docutils literal notranslate"><span class="pre">checked_div(amount,</span> <span class="pre">scalar)</span></code></p>
+<p><em>Parameters</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">amount</span></code>: the Amount struct.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scalar</span></code>: the fixed point scalar.</p></li>
+</ul>
+<p><em>Preconditions</em></p>
+<ul class="simple">
+<li><p>The multiplied amount MUST be representable by a 128 bit unsigned integer.</p></li>
+</ul>
+<p><em>Postconditions</em></p>
+<ul class="simple">
+<li><p>MUST return a copy of <code class="docutils literal notranslate"><span class="pre">amount</span></code> that is divided by the scalar.</p></li>
+</ul>
+</section>
+</section>
+<section id="ratio">
+<span id="currency-function-ratio"></span><h3>ratio<a class="headerlink" href="#ratio" title="Permalink to this headline"></a></h3>
+<p>Returns the fixed point ratio between two amounts.</p>
+<section id="id11">
+<h4>Specification<a class="headerlink" href="#id11" title="Permalink to this headline"></a></h4>
+<p><em>Function Signature</em></p>
+<p><code class="docutils literal notranslate"><span class="pre">ratio(amount1,</span> <span class="pre">amount2)</span></code></p>
+<p><em>Parameters</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">amount1</span></code>: the first Amount struct.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">amount2</span></code>: the second Amount struct.</p></li>
+</ul>
+<p><em>Preconditions</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">amount1.currencyId</span></code> MUST be equal to <code class="docutils literal notranslate"><span class="pre">amount2.currencyId</span></code></p></li>
+<li><p>The ratio MUST be representable by the fixed point type.</p></li>
+</ul>
+<p><em>Postconditions</em></p>
+<ul class="simple">
+<li><p>MUST return the ratio between the two amounts.</p></li>
+</ul>
+</section>
+</section>
+<section id="comparisons-lt-le-eq-ge-gt">
+<span id="currency-function-cmp"></span><h3>Comparisons: lt, le, eq, ge, gt<a class="headerlink" href="#comparisons-lt-le-eq-ge-gt" title="Permalink to this headline"></a></h3>
+<p>Compares two amounts</p>
+<section id="id12">
+<h4>Specification<a class="headerlink" href="#id12" title="Permalink to this headline"></a></h4>
+<p><em>Function Signature</em></p>
+<p><code class="docutils literal notranslate"><span class="pre">[lt|le|eq|ge|gt](amount1,</span> <span class="pre">amount2)</span></code></p>
+<p><em>Parameters</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">amount1</span></code>: the first Amount struct.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">amount2</span></code>: the second Amount struct.</p></li>
+</ul>
+<p><em>Preconditions</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">amount1.currencyId</span></code> MUST be equal to <code class="docutils literal notranslate"><span class="pre">amount2.currencyId</span></code></p></li>
+</ul>
+<p><em>Postconditions</em></p>
+<ul class="simple">
+<li><p>MUST return true when the comparison holds.</p></li>
+</ul>
+</section>
+</section>
+<section id="transfer">
+<span id="currency-function-transfer"></span><h3>transfer<a class="headerlink" href="#transfer" title="Permalink to this headline"></a></h3>
+<p>Transfers the amount between the given accounts.</p>
+<section id="id13">
+<h4>Specification<a class="headerlink" href="#id13" title="Permalink to this headline"></a></h4>
+<p><em>Function Signature</em></p>
+<p><code class="docutils literal notranslate"><span class="pre">transfer(amount,</span> <span class="pre">source,</span> <span class="pre">destination)</span></code></p>
+<p><em>Parameters</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">amount</span></code>: the Amount struct.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">source</span></code>: the account to transfer from.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">destination</span></code>: the account to transfer to.</p></li>
+</ul>
+<p><em>Preconditions</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">source</span></code> MUST have sufficient unlocked funds in the given currency</p></li>
+</ul>
+<p><em>Postconditions</em></p>
+<ul class="simple">
+<li><p>The free balance of <code class="docutils literal notranslate"><span class="pre">source</span></code> MUST decrease by <code class="docutils literal notranslate"><span class="pre">amount.amount</span></code> (in the currency determined by <code class="docutils literal notranslate"><span class="pre">amount.currencyId)</span></code></p></li>
+<li><p>The free balance of <code class="docutils literal notranslate"><span class="pre">destination</span></code> MUST increase by <code class="docutils literal notranslate"><span class="pre">amount.amount</span></code> (in the currency determined by <code class="docutils literal notranslate"><span class="pre">amount.currencyId)</span></code></p></li>
+</ul>
+</section>
+</section>
+<section id="lock-on">
+<span id="currency-function-lock-on"></span><h3>lock_on<a class="headerlink" href="#lock-on" title="Permalink to this headline"></a></h3>
+<p>Locks the amount on the given account.</p>
+<section id="id14">
+<h4>Specification<a class="headerlink" href="#id14" title="Permalink to this headline"></a></h4>
+<p><em>Function Signature</em></p>
+<p><code class="docutils literal notranslate"><span class="pre">lock_on(amount,</span> <span class="pre">accountId)</span></code></p>
+<p><em>Parameters</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">amount</span></code>: the Amount struct.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">accountId</span></code>: the account to lock the amount on.</p></li>
+</ul>
+<p><em>Preconditions</em></p>
+<ul class="simple">
+<li><p>The given account MUST have sufficient unlocked funds in the given currency.</p></li>
+</ul>
+<p><em>Postconditions</em></p>
+<ul class="simple">
+<li><p>The free balance of <code class="docutils literal notranslate"><span class="pre">accountId</span></code> MUST decrease by <code class="docutils literal notranslate"><span class="pre">amount.amount</span></code> (in the currency determined by <code class="docutils literal notranslate"><span class="pre">amount.currencyId)</span></code></p></li>
+<li><p>The locked balance of <code class="docutils literal notranslate"><span class="pre">accountId</span></code> MUST increase by <code class="docutils literal notranslate"><span class="pre">amount.amount</span></code> (in the currency determined by <code class="docutils literal notranslate"><span class="pre">amount.currencyId)</span></code></p></li>
+</ul>
+</section>
+</section>
+<section id="unlock-on">
+<span id="currency-function-unlock-on"></span><h3>unlock_on<a class="headerlink" href="#unlock-on" title="Permalink to this headline"></a></h3>
+<p>Unlocks the amount on the given account.</p>
+<section id="id15">
+<h4>Specification<a class="headerlink" href="#id15" title="Permalink to this headline"></a></h4>
+<p><em>Function Signature</em></p>
+<p><code class="docutils literal notranslate"><span class="pre">unlock_on(amount,</span> <span class="pre">accountId)</span></code></p>
+<p><em>Parameters</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">amount</span></code>: the Amount struct.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">accountId</span></code>: the account to unlock the amount on.</p></li>
+</ul>
+<p><em>Preconditions</em></p>
+<ul class="simple">
+<li><p>The given account MUST have sufficient locked funds in the given currency.</p></li>
+</ul>
+<p><em>Postconditions</em></p>
+<ul class="simple">
+<li><p>The locked balance of <code class="docutils literal notranslate"><span class="pre">accountId</span></code> MUST decrease by <code class="docutils literal notranslate"><span class="pre">amount.amount</span></code> (in the currency determined by <code class="docutils literal notranslate"><span class="pre">amount.currencyId)</span></code></p></li>
+<li><p>The free balance of <code class="docutils literal notranslate"><span class="pre">accountId</span></code> MUST increase by <code class="docutils literal notranslate"><span class="pre">amount.amount</span></code> (in the currency determined by <code class="docutils literal notranslate"><span class="pre">amount.currencyId)</span></code></p></li>
+</ul>
+</section>
+</section>
+<section id="burn-from">
+<span id="currency-function-burn-from"></span><h3>burn_from<a class="headerlink" href="#burn-from" title="Permalink to this headline"></a></h3>
+<p>Burns the amount on the given account.</p>
+<section id="id16">
+<h4>Specification<a class="headerlink" href="#id16" title="Permalink to this headline"></a></h4>
+<p><em>Function Signature</em></p>
+<p><code class="docutils literal notranslate"><span class="pre">burn_from(amount,</span> <span class="pre">accountId)</span></code></p>
+<p><em>Parameters</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">amount</span></code>: the Amount struct.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">accountId</span></code>: the account to lock the amount on.</p></li>
+</ul>
+<p><em>Preconditions</em></p>
+<ul class="simple">
+<li><p>The given account MUST have sufficient locked funds in the given currency.</p></li>
+</ul>
+<p><em>Postconditions</em></p>
+<ul class="simple">
+<li><p>The locked balance of <code class="docutils literal notranslate"><span class="pre">accountId</span></code> MUST decrease by <code class="docutils literal notranslate"><span class="pre">amount.amount</span></code> (in the currency determined by <code class="docutils literal notranslate"><span class="pre">amount.currencyId)</span></code></p></li>
+</ul>
+</section>
+</section>
+<section id="mint-to">
+<span id="currency-function-mint-to"></span><h3>mint_to<a class="headerlink" href="#mint-to" title="Permalink to this headline"></a></h3>
+<p>Mints the amount on the given account.</p>
+<section id="id17">
+<h4>Specification<a class="headerlink" href="#id17" title="Permalink to this headline"></a></h4>
+<p><em>Function Signature</em></p>
+<p><code class="docutils literal notranslate"><span class="pre">mint_to(amount,</span> <span class="pre">accountId)</span></code></p>
+<p><em>Parameters</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">amount</span></code>: the Amount struct.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">accountId</span></code>: the account to mint the amount on.</p></li>
+</ul>
+<p><em>Postconditions</em></p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">free</span></code> balance of <code class="docutils literal notranslate"><span class="pre">accountId</span></code> MUST increase by <code class="docutils literal notranslate"><span class="pre">amount.amount</span></code> (in the currency determined by <code class="docutils literal notranslate"><span class="pre">amount.currencyId)</span></code></p></li>
+</ul>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="collateral.html" class="btn btn-neutral float-left" title="Collateral" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="fee.html" class="btn btn-neutral float-right" title="Fee" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Interlay.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

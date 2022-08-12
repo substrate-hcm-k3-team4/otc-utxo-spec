@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Escrow &mdash; interBTC Specification  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Governance" href="governance.html" />
+    <link rel="prev" title="Staking" href="staking.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: grey" >
+            <a href="../index.html" class="icon icon-home"> interBTC Specification
+          </a>
+              <div class="version">
+                v5.6.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro/at-a-glance.html">interBTC at a Glance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/CbA.html">Cryptocurrency-backed Assets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/polkadot.html">Polkadot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/bitcoin.html">Bitcoin Data Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/accepted-format.html">Accepted Bitcoin Transaction Format</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">How to Read This Specification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Specification</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="btc-relay/index.html">BTC-Relay</a></li>
+<li class="toctree-l1"><a class="reference internal" href="collateral.html">Collateral</a></li>
+<li class="toctree-l1"><a class="reference internal" href="currency.html">Currency</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fee.html">Fee</a></li>
+<li class="toctree-l1"><a class="reference internal" href="oracle.html">Oracle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="issue.html">Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="refund.html">Refund</a></li>
+<li class="toctree-l1"><a class="reference internal" href="redeem.html">Redeem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="replace.html">Replace</a></li>
+<li class="toctree-l1"><a class="reference internal" href="security.html">Security</a></li>
+<li class="toctree-l1"><a class="reference internal" href="relay.html">Relay</a></li>
+<li class="toctree-l1"><a class="reference internal" href="treasury.html">Treasury</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vault-registry.html">Vault Registry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nomination.html">Vault Nomination</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reward.html">Reward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="staking.html">Staking</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Escrow</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#step-by-step">Step-by-step</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#data-model">Data Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#constants">Constants</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#span">Span</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#maxperiod">MaxPeriod</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#scalars">Scalars</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#epoch">Epoch</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#maps">Maps</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#locked">Locked</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pointhistory">PointHistory</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#userpointhistory">UserPointHistory</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#userpointepoch">UserPointEpoch</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#slopechanges">SlopeChanges</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#structs">Structs</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#lockedbalance">LockedBalance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#point">Point</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#external-functions">External Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#create-lock">create_lock</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#specification">Specification</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#increase-amount">increase_amount</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Specification</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#extend-unlock-height">extend_unlock_height</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Specification</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#withdraw">withdraw</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id3">Specification</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#internal-functions">Internal Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#balance-at">balance_at</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id4">Specification</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#events">Events</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#deposit">Deposit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#escrow-event-withdraw">Withdraw</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="governance.html">Governance</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Security and Performance</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../security_performance/liquidations.html">Vault Liquidations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../security_performance/xclaim-security.html">XCLAIM Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../security_performance/btcrelay-security.html">BTC-Relay Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../security_performance/performance.html">Performance Analysis</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Economics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../economics/incentives.html">Economic Incentives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../economics/fees.html">Fee Model</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">All the rest</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../other/license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../other/interlay.html">Interlay</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: grey" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">interBTC Specification</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Escrow</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/spec/escrow.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="escrow">
+<span id="escrow-protocol"></span><h1>Escrow<a class="headerlink" href="#escrow" title="Permalink to this headline"></a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline"></a></h2>
+<p>The Escrow module allows users to lockup tokens in exchange for a non-fungible voting asset. The total “power” of this asset decays linearly as the lock approaches expiry - calculated based on the block height. Historic points for the linear function are recorded each time a user’s balance is adjusted which allows us to re-construct voting power at a particular point in time.</p>
+<p>This architecture was adopted from Curve, see: <a class="reference external" href="https://curve.readthedocs.io/dao-vecrv.html">Vote-Escrowed CRV (veCRV)</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This specification is still a Work-in-Progress (WIP), some information may be outdated or incomplete.</p>
+</div>
+<section id="step-by-step">
+<h3>Step-by-step<a class="headerlink" href="#step-by-step" title="Permalink to this headline"></a></h3>
+<ol class="arabic simple">
+<li><p>A user may lock any amount of defined governance currency (KINT on Kintsugi, INTR on Interlay) up to a maximum lock period.</p></li>
+<li><p>Both the amount and the unlock time may be increased to improve voting power.</p></li>
+<li><p>The user may unlock their fungible asset after the lock has expired.</p></li>
+</ol>
+</section>
+</section>
+<section id="data-model">
+<h2>Data Model<a class="headerlink" href="#data-model" title="Permalink to this headline"></a></h2>
+<section id="constants">
+<h3>Constants<a class="headerlink" href="#constants" title="Permalink to this headline"></a></h3>
+<section id="span">
+<span id="escrow-constant-span"></span><h4>Span<a class="headerlink" href="#span" title="Permalink to this headline"></a></h4>
+<p>The locktime is rounded to weeks to limit checkpoint iteration.</p>
+</section>
+<section id="maxperiod">
+<span id="escrow-constant-max-period"></span><h4>MaxPeriod<a class="headerlink" href="#maxperiod" title="Permalink to this headline"></a></h4>
+<p>The maximum period for lockup.</p>
+</section>
+</section>
+<section id="scalars">
+<h3>Scalars<a class="headerlink" href="#scalars" title="Permalink to this headline"></a></h3>
+<section id="epoch">
+<span id="escrow-scalar-epoch"></span><h4>Epoch<a class="headerlink" href="#epoch" title="Permalink to this headline"></a></h4>
+<p>The current global epoch for <code class="docutils literal notranslate"><span class="pre">PointHistory</span></code>.</p>
+</section>
+</section>
+<section id="maps">
+<h3>Maps<a class="headerlink" href="#maps" title="Permalink to this headline"></a></h3>
+<section id="locked">
+<span id="escrow-map-locked"></span><h4>Locked<a class="headerlink" href="#locked" title="Permalink to this headline"></a></h4>
+<p>Stores the <code class="docutils literal notranslate"><span class="pre">amount</span></code> and <code class="docutils literal notranslate"><span class="pre">end</span></code> block for an account’s lock.</p>
+</section>
+<section id="pointhistory">
+<span id="escrow-map-point-history"></span><h4>PointHistory<a class="headerlink" href="#pointhistory" title="Permalink to this headline"></a></h4>
+<p>Stores the global <code class="docutils literal notranslate"><span class="pre">bias</span></code>, <code class="docutils literal notranslate"><span class="pre">slope</span></code> and <code class="docutils literal notranslate"><span class="pre">height</span></code> at a particular point in history.</p>
+</section>
+<section id="userpointhistory">
+<span id="escrow-map-user-point-history"></span><h4>UserPointHistory<a class="headerlink" href="#userpointhistory" title="Permalink to this headline"></a></h4>
+<p>Stores the <code class="docutils literal notranslate"><span class="pre">bias</span></code>, <code class="docutils literal notranslate"><span class="pre">slope</span></code> and <code class="docutils literal notranslate"><span class="pre">height</span></code> for an account at a particular point in history.</p>
+</section>
+<section id="userpointepoch">
+<span id="escrow-map-user-point-epoch"></span><h4>UserPointEpoch<a class="headerlink" href="#userpointepoch" title="Permalink to this headline"></a></h4>
+<p>Stores the current epoch for an account.</p>
+</section>
+<section id="slopechanges">
+<span id="escrow-map-slope-changes"></span><h4>SlopeChanges<a class="headerlink" href="#slopechanges" title="Permalink to this headline"></a></h4>
+<p>Stores scheduled changes of slopes for ending locks.</p>
+</section>
+</section>
+<section id="structs">
+<h3>Structs<a class="headerlink" href="#structs" title="Permalink to this headline"></a></h3>
+<section id="lockedbalance">
+<h4>LockedBalance<a class="headerlink" href="#lockedbalance" title="Permalink to this headline"></a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">amount</span></code> and <code class="docutils literal notranslate"><span class="pre">end</span></code> height for a locked balance.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 14%" />
+<col style="width: 72%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">amount</span></code></p></td>
+<td><p>Balance</p></td>
+<td><p>The amount deposited to receive vote-escrowed tokens.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">end</span></code></p></td>
+<td><p>BlockNumber</p></td>
+<td><p>The end height after which the balance can be unlocked.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="point">
+<h4>Point<a class="headerlink" href="#point" title="Permalink to this headline"></a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">bias</span></code>, <code class="docutils literal notranslate"><span class="pre">slope</span></code> and <code class="docutils literal notranslate"><span class="pre">height</span></code> for our linear function.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 15%" />
+<col style="width: 71%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bias</span></code></p></td>
+<td><p>Balance</p></td>
+<td><p>The bias for the linear function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">slope</span></code></p></td>
+<td><p>Balance</p></td>
+<td><p>The slope for the linear function.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">height</span></code></p></td>
+<td><p>BlockNumber</p></td>
+<td><p>The current block height when this point was stored.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+<section id="external-functions">
+<h2>External Functions<a class="headerlink" href="#external-functions" title="Permalink to this headline"></a></h2>
+<section id="create-lock">
+<span id="escrow-function-create-lock"></span><h3>create_lock<a class="headerlink" href="#create-lock" title="Permalink to this headline"></a></h3>
+<p>Create a lock on the account’s balance to expire in the future.</p>
+<section id="specification">
+<h4>Specification<a class="headerlink" href="#specification" title="Permalink to this headline"></a></h4>
+<p><em>Function Signature</em></p>
+<p><code class="docutils literal notranslate"><span class="pre">create_lock(who,</span> <span class="pre">amount,</span> <span class="pre">unlock_height)</span></code></p>
+<p><em>Parameters</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">who</span></code>: The user’s address.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">amount</span></code>: The amount to be locked.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">unlock_height</span></code>: The height to lock until.</p></li>
+</ul>
+<p><em>Events</em></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#escrow-event-deposit"><span class="std std-ref">Deposit</span></a></p></li>
+</ul>
+<p><em>Preconditions</em></p>
+<ul class="simple">
+<li><p>The function call MUST be signed by <code class="docutils literal notranslate"><span class="pre">who</span></code>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">amount</span></code> MUST be non-zero.</p></li>
+<li><p>The account’s <code class="docutils literal notranslate"><span class="pre">old_locked.amount</span></code> MUST be non-zero.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">unlock_height</span></code> MUST be greater than <code class="docutils literal notranslate"><span class="pre">now</span></code>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">unlock_height</span></code> MUST NOT be greater than <code class="docutils literal notranslate"><span class="pre">now</span> <span class="pre">+</span> <span class="pre">MaxPeriod</span></code>.</p></li>
+</ul>
+<p><em>Postconditions</em></p>
+<ul>
+<li><p>The account’s <code class="docutils literal notranslate"><span class="pre">LockedBalance</span></code> MUST be set as follows:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">new_locked.amount</span></code>: MUST be the <code class="docutils literal notranslate"><span class="pre">amount</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">new_locked.end</span></code>: MUST be the <code class="docutils literal notranslate"><span class="pre">unlock_height</span></code>.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">UserPointEpoch</span></code> MUST increase by one.</p></li>
+<li><p>A new <code class="docutils literal notranslate"><span class="pre">Point</span></code> MUST be recorded at this epoch:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">slope</span> <span class="pre">=</span> <span class="pre">amount</span> <span class="pre">/</span> <span class="pre">max_period</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bias</span> <span class="pre">=</span> <span class="pre">slope</span> <span class="pre">*</span> <span class="pre">(unlock_height</span> <span class="pre">-</span> <span class="pre">now)</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">height</span> <span class="pre">=</span> <span class="pre">now</span></code></p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Function <a class="reference internal" href="reward.html#reward-withdrawstake"><span class="std std-ref">withdrawStake</span></a> MUST complete successfully using the account’s total stake.</p></li>
+<li><p>Function <a class="reference internal" href="reward.html#reward-depositstake"><span class="std std-ref">depositStake</span></a> MUST complete successfully using the current balance (<a class="reference internal" href="#escrow-function-balance-at"><span class="std std-ref">balance_at</span></a>).</p></li>
+</ul>
+</section>
+</section>
+<section id="increase-amount">
+<span id="escrow-function-increase-amount"></span><h3>increase_amount<a class="headerlink" href="#increase-amount" title="Permalink to this headline"></a></h3>
+<p>Deposit additional tokens for a pre-existing lock to improve voting power.</p>
+<section id="id1">
+<h4>Specification<a class="headerlink" href="#id1" title="Permalink to this headline"></a></h4>
+<p><em>Function Signature</em></p>
+<p><code class="docutils literal notranslate"><span class="pre">increase_amount(who,</span> <span class="pre">amount)</span></code></p>
+<p><em>Parameters</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">who</span></code>: The user’s address.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">amount</span></code>: The amount to be locked.</p></li>
+</ul>
+<p><em>Events</em></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#escrow-event-deposit"><span class="std std-ref">Deposit</span></a></p></li>
+</ul>
+<p><em>Preconditions</em></p>
+<ul class="simple">
+<li><p>The function call MUST be signed by <code class="docutils literal notranslate"><span class="pre">who</span></code>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">amount</span></code> MUST be non-zero.</p></li>
+<li><p>The account’s <code class="docutils literal notranslate"><span class="pre">old_locked.amount</span></code> MUST be non-zero.</p></li>
+<li><p>The account’s <code class="docutils literal notranslate"><span class="pre">old_locked.end</span></code> MUST be greater than <code class="docutils literal notranslate"><span class="pre">now</span></code>.</p></li>
+</ul>
+<p><em>Postconditions</em></p>
+<ul>
+<li><p>The account’s <code class="docutils literal notranslate"><span class="pre">LockedBalance</span></code> MUST be set as follows:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">new_locked.amount</span></code>: MUST be <code class="docutils literal notranslate"><span class="pre">old_locked.amount</span> <span class="pre">+</span> <span class="pre">amount</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">new_locked.end</span></code>: MUST be the <code class="docutils literal notranslate"><span class="pre">old_locked.end</span></code>.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">UserPointEpoch</span></code> MUST increase by one.</p></li>
+<li><p>A new <code class="docutils literal notranslate"><span class="pre">Point</span></code> MUST be recorded at this epoch:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">slope</span> <span class="pre">=</span> <span class="pre">new_locked.amount</span> <span class="pre">/</span> <span class="pre">max_period</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bias</span> <span class="pre">=</span> <span class="pre">slope</span> <span class="pre">*</span> <span class="pre">(new_locked.end</span> <span class="pre">-</span> <span class="pre">now)</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">height</span> <span class="pre">=</span> <span class="pre">now</span></code></p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+</section>
+<section id="extend-unlock-height">
+<span id="escrow-function-extend-unlock-height"></span><h3>extend_unlock_height<a class="headerlink" href="#extend-unlock-height" title="Permalink to this headline"></a></h3>
+<p>Push back the expiry on a pre-existing lock to retain voting power.</p>
+<section id="id2">
+<h4>Specification<a class="headerlink" href="#id2" title="Permalink to this headline"></a></h4>
+<p><em>Function Signature</em></p>
+<p><code class="docutils literal notranslate"><span class="pre">extend_unlock_height(who,</span> <span class="pre">unlock_height)</span></code></p>
+<p><em>Parameters</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">who</span></code>: The user’s address.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">unlock_height</span></code>: The new expiry deadline.</p></li>
+</ul>
+<p><em>Events</em></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#escrow-event-deposit"><span class="std std-ref">Deposit</span></a></p></li>
+</ul>
+<p><em>Preconditions</em></p>
+<ul class="simple">
+<li><p>The function call MUST be signed by <code class="docutils literal notranslate"><span class="pre">who</span></code>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">amount</span></code> MUST be non-zero.</p></li>
+<li><p>The account’s <code class="docutils literal notranslate"><span class="pre">old_locked.amount</span></code> MUST be non-zero.</p></li>
+<li><p>The account’s <code class="docutils literal notranslate"><span class="pre">old_locked.end</span></code> MUST be greater than <code class="docutils literal notranslate"><span class="pre">now</span></code>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">unlock_height</span></code> MUST be greater than <code class="docutils literal notranslate"><span class="pre">old_locked.end</span></code>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">unlock_height</span></code> MUST NOT be greater than <code class="docutils literal notranslate"><span class="pre">now</span> <span class="pre">+</span> <span class="pre">MaxPeriod</span></code>.</p></li>
+</ul>
+<p><em>Postconditions</em></p>
+<ul>
+<li><p>The account’s <code class="docutils literal notranslate"><span class="pre">LockedBalance</span></code> MUST be set as follows:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">new_locked.amount</span></code>: MUST be <code class="docutils literal notranslate"><span class="pre">old_locked.amount</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">new_locked.end</span></code>: MUST be the <code class="docutils literal notranslate"><span class="pre">unlock_height</span></code>.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">UserPointEpoch</span></code> MUST increase by one.</p></li>
+<li><p>A new <code class="docutils literal notranslate"><span class="pre">Point</span></code> MUST be recorded at this epoch:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">slope</span> <span class="pre">=</span> <span class="pre">new_locked.amount</span> <span class="pre">/</span> <span class="pre">max_period</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bias</span> <span class="pre">=</span> <span class="pre">slope</span> <span class="pre">*</span> <span class="pre">(new_locked.end</span> <span class="pre">-</span> <span class="pre">now)</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">height</span> <span class="pre">=</span> <span class="pre">now</span></code></p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+</section>
+<section id="withdraw">
+<span id="escrow-function-withdraw"></span><h3>withdraw<a class="headerlink" href="#withdraw" title="Permalink to this headline"></a></h3>
+<p>Remove the lock on an account to allow access to the account’s funds.</p>
+<section id="id3">
+<h4>Specification<a class="headerlink" href="#id3" title="Permalink to this headline"></a></h4>
+<p><em>Function Signature</em></p>
+<p><code class="docutils literal notranslate"><span class="pre">withdraw(who)</span></code></p>
+<p><em>Parameters</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">who</span></code>: The user’s address.</p></li>
+</ul>
+<p><em>Events</em></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#escrow-event-withdraw"><span class="std std-ref">Withdraw</span></a></p></li>
+</ul>
+<p><em>Preconditions</em></p>
+<ul class="simple">
+<li><p>The function call MUST be signed by <code class="docutils literal notranslate"><span class="pre">who</span></code>.</p></li>
+<li><p>The account’s <code class="docutils literal notranslate"><span class="pre">old_locked.amount</span></code> MUST be non-zero.</p></li>
+<li><p>The current height (<code class="docutils literal notranslate"><span class="pre">now</span></code>) MUST be greater than or equal to <code class="docutils literal notranslate"><span class="pre">old_locked.end</span></code>.</p></li>
+</ul>
+<p><em>Postconditions</em></p>
+<ul class="simple">
+<li><p>The account’s <code class="docutils literal notranslate"><span class="pre">LockedBalance</span></code> MUST be removed.</p></li>
+<li><p>Function <a class="reference internal" href="reward.html#reward-withdrawstake"><span class="std std-ref">withdrawStake</span></a> MUST complete successfully using the account’s total stake.</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="internal-functions">
+<h2>Internal Functions<a class="headerlink" href="#internal-functions" title="Permalink to this headline"></a></h2>
+<section id="balance-at">
+<span id="escrow-function-balance-at"></span><h3>balance_at<a class="headerlink" href="#balance-at" title="Permalink to this headline"></a></h3>
+<p>Using the <code class="docutils literal notranslate"><span class="pre">Point</span></code>, we can calculate the current voting power (<code class="docutils literal notranslate"><span class="pre">balance</span></code>) as follows:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">balance</span> <span class="pre">=</span> <span class="pre">point.bias</span> <span class="pre">-</span> <span class="pre">(point.slope</span> <span class="pre">*</span> <span class="pre">(height</span> <span class="pre">-</span> <span class="pre">point.height))</span></code></p>
+</div></blockquote>
+<section id="id4">
+<h4>Specification<a class="headerlink" href="#id4" title="Permalink to this headline"></a></h4>
+<p><em>Function Signature</em></p>
+<p><code class="docutils literal notranslate"><span class="pre">balance_at(who,</span> <span class="pre">height)</span></code></p>
+<p><em>Parameters</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">who</span></code>: The user’s address.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">height</span></code>: The future height.</p></li>
+</ul>
+<p><em>Preconditions</em></p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">height</span></code> MUST be <code class="docutils literal notranslate"><span class="pre">&gt;=</span> <span class="pre">point.height</span></code>.</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="events">
+<h2>Events<a class="headerlink" href="#events" title="Permalink to this headline"></a></h2>
+<section id="deposit">
+<span id="escrow-event-deposit"></span><h3>Deposit<a class="headerlink" href="#deposit" title="Permalink to this headline"></a></h3>
+<p>Emit an event if a user successfully deposited tokens or increased the lock time.</p>
+<p><em>Event Signature</em></p>
+<p><code class="docutils literal notranslate"><span class="pre">Deposit(who,</span> <span class="pre">amount,</span> <span class="pre">unlock_height)</span></code></p>
+<p><em>Parameters</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">who</span></code>: The user’s account identifier.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">amount</span></code>: The amount locked.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">unlock_height</span></code>: The height to unlock after.</p></li>
+</ul>
+<p><em>Functions</em></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#escrow-function-create-lock"><span class="std std-ref">create_lock</span></a></p></li>
+</ul>
+</section>
+<section id="escrow-event-withdraw">
+<span id="id5"></span><h3>Withdraw<a class="headerlink" href="#escrow-event-withdraw" title="Permalink to this headline"></a></h3>
+<p>Emit an event if a user withdrew previously locked tokens.</p>
+<p><em>Event Signature</em></p>
+<p><code class="docutils literal notranslate"><span class="pre">Withdraw(who,</span> <span class="pre">amount)</span></code></p>
+<p><em>Parameters</em></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">who</span></code>: The user’s account identifier.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">amount</span></code>: The amount unlocked.</p></li>
+</ul>
+<p><em>Functions</em></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#escrow-function-withdraw"><span class="std std-ref">withdraw</span></a></p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="staking.html" class="btn btn-neutral float-left" title="Staking" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="governance.html" class="btn btn-neutral float-right" title="Governance" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Interlay.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

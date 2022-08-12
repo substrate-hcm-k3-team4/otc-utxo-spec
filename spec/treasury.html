@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Treasury &mdash; interBTC Specification  documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Vault Registry" href="vault-registry.html" />
+    <link rel="prev" title="Relay" href="relay.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: grey" >
+            <a href="../index.html" class="icon icon-home"> interBTC Specification
+          </a>
+              <div class="version">
+                v5.6.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro/at-a-glance.html">interBTC at a Glance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/CbA.html">Cryptocurrency-backed Assets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/polkadot.html">Polkadot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/bitcoin.html">Bitcoin Data Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../intro/accepted-format.html">Accepted Bitcoin Transaction Format</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">How to Read This Specification</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Specification</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="btc-relay/index.html">BTC-Relay</a></li>
+<li class="toctree-l1"><a class="reference internal" href="collateral.html">Collateral</a></li>
+<li class="toctree-l1"><a class="reference internal" href="currency.html">Currency</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fee.html">Fee</a></li>
+<li class="toctree-l1"><a class="reference internal" href="oracle.html">Oracle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="issue.html">Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="refund.html">Refund</a></li>
+<li class="toctree-l1"><a class="reference internal" href="redeem.html">Redeem</a></li>
+<li class="toctree-l1"><a class="reference internal" href="replace.html">Replace</a></li>
+<li class="toctree-l1"><a class="reference internal" href="security.html">Security</a></li>
+<li class="toctree-l1"><a class="reference internal" href="relay.html">Relay</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Treasury</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#step-by-step">Step-by-step</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="vault-registry.html">Vault Registry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nomination.html">Vault Nomination</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reward.html">Reward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="staking.html">Staking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="escrow.html">Escrow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="governance.html">Governance</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Security and Performance</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../security_performance/liquidations.html">Vault Liquidations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../security_performance/xclaim-security.html">XCLAIM Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../security_performance/btcrelay-security.html">BTC-Relay Security Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../security_performance/performance.html">Performance Analysis</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Economics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../economics/incentives.html">Economic Incentives</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../economics/fees.html">Fee Model</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">All the rest</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../other/license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../other/interlay.html">Interlay</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: grey" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">interBTC Specification</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Treasury</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/spec/treasury.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="treasury">
+<span id="treasury-module"></span><h1>Treasury<a class="headerlink" href="#treasury" title="Permalink to this headline"></a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline"></a></h2>
+<p>Conceptually, the treasury serves as both the central storage for all interBTC and the interface though which to manage interBTC amount. It is implemented through the <a class="reference internal" href="currency.html#currency"><span class="std std-ref">Currency</span></a> pallet.</p>
+<p>There are three main operations on interBTC to interact with the user or the <a class="reference internal" href="issue.html#issue-protocol"><span class="std std-ref">Issue</span></a> and <a class="reference internal" href="redeem.html#redeem-protocol"><span class="std std-ref">Redeem</span></a> components.</p>
+<section id="step-by-step">
+<h3>Step-by-step<a class="headerlink" href="#step-by-step" title="Permalink to this headline"></a></h3>
+<ul class="simple">
+<li><p><strong>Transfer</strong>: A user sends an amount of interBTC to another user by calling the <a class="reference internal" href="currency.html#currency-function-transfer"><span class="std std-ref">transfer</span></a> function.</p></li>
+<li><p><strong>Issue</strong>: The issue module calls into the treasury when an issue request is completed (via <a class="reference internal" href="issue.html#executeissue"><span class="std std-ref">executeIssue</span></a>) and the user has provided a valid proof that the required amount of BTC was sent to the correct vault. The issue module calls the <a class="reference internal" href="currency.html#currency-function-mint-to"><span class="std std-ref">mint_to</span></a> function to create interBTC.</p></li>
+<li><p><strong>Redeem</strong>: The redeem protocol requires two calls to the treasury module. First, a user requests a redeem via the <a class="reference internal" href="redeem.html#requestredeem"><span class="std std-ref">requestRedeem</span></a> function. This invokes a call to the <a class="reference internal" href="currency.html#currency-function-lock-on"><span class="std std-ref">lock_on</span></a> function that locks the requested amount of tokens for this user. Second, when a redeem request is completed (via <a class="reference internal" href="redeem.html#executeredeem"><span class="std std-ref">executeRedeem</span></a>) and the vault has provided a valid proof that it transferred the required amount of BTC to the correct user, the redeem module calls the <a class="reference internal" href="currency.html#currency-function-burn-from"><span class="std std-ref">burn_from</span></a> function to destroy the previously locked interBTC.</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="relay.html" class="btn btn-neutral float-left" title="Relay" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="vault-registry.html" class="btn btn-neutral float-right" title="Vault Registry" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Interlay.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
